@@ -87,7 +87,7 @@ def get_token(profile: str = "default") -> str:
     token = cfg.get("access_token") or os.environ.get("META_ACCESS_TOKEN")
     if not token:
         print("[ERROR] Meta Access Token is required.", file=sys.stderr)
-        print("Set it using: fbads config --access-token <TOKEN>", file=sys.stderr)
+        print("Set it using: meta config --access-token <TOKEN>", file=sys.stderr)
         sys.exit(1)
     return token.strip()
 
@@ -185,7 +185,7 @@ def cmd_status(args):
 
     print(f"=== Meta Ads Status (Profile: '{prof}') ===")
     if not token:
-        print("[-] Status: Missing access token. Run 'fbads config --access-token <TOKEN>'")
+        print("[-] Status: Missing access token. Run 'meta config --access-token <TOKEN>'")
         return
 
     try:
@@ -234,7 +234,7 @@ def get_target_account(args, prof: str) -> str:
     cfg = load_config(prof)
     act_id = cfg.get("account_id")
     if not act_id:
-        print("[ERROR] Account ID is required (--account-id act_123456789 or set via 'fbads config --account-id <ID>')", file=sys.stderr)
+        print("[ERROR] Account ID is required (--account-id act_123456789 or set via 'meta config --account-id <ID>')", file=sys.stderr)
         sys.exit(1)
     return clean_act_id(act_id)
 
