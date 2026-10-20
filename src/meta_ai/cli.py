@@ -225,13 +225,18 @@ def cmd_accounts(args):
             status_str
         ])
 
-    print_table(headers, rows, args.json, args.csv)
+    print_table(headers, rows, getattr(args, 'json', False), getattr(args, 'csv', False))
 
 
-def get_date_preset(days: int) -> str:
+def get_date_preset(days: Optional[int] = 30, preset: Optional[str] = None) -> str:
     """Return valid Meta Graph API date_preset string."""
-    if days in [3, 7, 14, 28, 30, 90]:
-        return f"last_{days}d"
+    if preset:
+        return preset.strip()
+    if days is not None:
+        if days in [3, 7, 14, 28, 30, 90]:
+            return f"last_{days}d"
+        if days >= 365:
+            return "maximum"
     return "last_30d"
 
 
@@ -251,9 +256,11 @@ def cmd_campaigns(args):
     act_id = get_target_account(args, prof)
     days = args.days or 30
 
+    preset = getattr(args, 'preset', None)
+
     params = {
         "level": "campaign",
-        "date_preset": get_date_preset(days),
+        "date_preset": get_date_preset(days, preset),
         "fields": "campaign_name,objective,spend,impressions,clicks,cpc,ctr,cpm,actions,cost_per_action_type",
         "limit": 100
     }
@@ -279,7 +286,7 @@ def cmd_campaigns(args):
             purchases
         ])
 
-    print_table(headers, rows, args.json, args.csv)
+    print_table(headers, rows, getattr(args, 'json', False), getattr(args, 'csv', False))
 
 
 def cmd_adsets(args):
@@ -287,9 +294,11 @@ def cmd_adsets(args):
     act_id = get_target_account(args, prof)
     days = args.days or 30
 
+    preset = getattr(args, 'preset', None)
+
     params = {
         "level": "adset",
-        "date_preset": get_date_preset(days),
+        "date_preset": get_date_preset(days, preset),
         "fields": "adset_name,campaign_name,spend,impressions,clicks,cpc,ctr,actions",
         "limit": 100
     }
@@ -315,7 +324,7 @@ def cmd_adsets(args):
             purchases
         ])
 
-    print_table(headers, rows, args.json, args.csv)
+    print_table(headers, rows, getattr(args, 'json', False), getattr(args, 'csv', False))
 
 
 def cmd_ads(args):
@@ -323,9 +332,11 @@ def cmd_ads(args):
     act_id = get_target_account(args, prof)
     days = args.days or 30
 
+    preset = getattr(args, 'preset', None)
+
     params = {
         "level": "ad",
-        "date_preset": get_date_preset(days),
+        "date_preset": get_date_preset(days, preset),
         "fields": "ad_name,adset_name,campaign_name,spend,impressions,clicks,ctr,cpc,actions",
         "limit": args.limit or 100
     }
@@ -349,7 +360,7 @@ def cmd_ads(args):
             purchases
         ])
 
-    print_table(headers, rows, args.json, args.csv)
+    print_table(headers, rows, getattr(args, 'json', False), getattr(args, 'csv', False))
 
 
 def cmd_breakdowns(args):
@@ -364,8 +375,10 @@ def cmd_breakdowns(args):
     }
     bd_param = breakdown_map.get(args.by, args.by)
 
+    preset = getattr(args, 'preset', None)
+
     params = {
-        "date_preset": get_date_preset(days),
+        "date_preset": get_date_preset(days, preset),
         "breakdowns": bd_param,
         "fields": "spend,impressions,clicks,ctr,cpc,actions",
         "limit": 100
@@ -393,7 +406,7 @@ def cmd_breakdowns(args):
             f"${round(float(r.get('cpc', 0)), 2)}"
         ])
 
-    print_table(headers, rows, args.json, args.csv)
+    print_table(headers, rows, getattr(args, 'json', False), getattr(args, 'csv', False))
 
 
 def cmd_query(args):
@@ -430,12 +443,15 @@ def main():
     p_cfg.add_argument("--account-id", help="Set default Ad Account ID (e.g. act_123456789)")
 
     # Accounts
-    sub.add_parser("accounts", help="List all ad accounts accessible with this token", parents=[common_parser])
+    p_acc = sub.add_parser("accounts", help="List all ad accounts accessible with this token", parents=[common_parser])
+    p_acc.add_argument("--json", action="store_true", help="Output JSON")
+    p_acc.add_argument("--csv", action="store_true", help="Output CSV")
 
     # Campaigns
     p_camp = sub.add_parser("campaigns", help="List campaigns with spend, clicks, conversions", parents=[common_parser])
     p_camp.add_argument("--account-id", help="Ad Account ID (act_xxxxxxxx)")
-    p_camp.add_argument("--days", type=int, default=30, help="Days back (7, 14, 30, 90)")
+    p_camp.add_argument("--days", type=int, default=30, help="Days back (7, 14, 30, 90, 365)")
+    p_camp.add_argument("--preset", help="Meta date_preset (e.g. today, yesterday, this_month, last_month, this_year, last_year, maximum)")
     p_camp.add_argument("--json", action="store_true", help="Output JSON")
     p_camp.add_argument("--csv", action="store_true", help="Output CSV")
 
@@ -443,6 +459,7 @@ def main():
     p_as = sub.add_parser("adsets", help="List ad sets performance", parents=[common_parser])
     p_as.add_argument("--account-id", help="Ad Account ID")
     p_as.add_argument("--days", type=int, default=30, help="Days back")
+    p_as.add_argument("--preset", help="Meta date_preset")
     p_as.add_argument("--json", action="store_true", help="Output JSON")
     p_as.add_argument("--csv", action="store_true", help="Output CSV")
 
@@ -450,6 +467,7 @@ def main():
     p_ad = sub.add_parser("ads", help="List individual ads/creatives performance", parents=[common_parser])
     p_ad.add_argument("--account-id", help="Ad Account ID")
     p_ad.add_argument("--days", type=int, default=30, help="Days back")
+    p_ad.add_argument("--preset", help="Meta date_preset")
     p_ad.add_argument("--limit", type=int, default=100, help="Max rows")
     p_ad.add_argument("--json", action="store_true", help="Output JSON")
     p_ad.add_argument("--csv", action="store_true", help="Output CSV")
@@ -459,6 +477,7 @@ def main():
     p_bd.add_argument("--account-id", help="Ad Account ID")
     p_bd.add_argument("--by", choices=["placement", "country", "age_gender"], default="placement", help="Breakdown dimension")
     p_bd.add_argument("--days", type=int, default=30, help="Days back")
+    p_bd.add_argument("--preset", help="Meta date_preset")
     p_bd.add_argument("--json", action="store_true", help="Output JSON")
     p_bd.add_argument("--csv", action="store_true", help="Output CSV")
 
