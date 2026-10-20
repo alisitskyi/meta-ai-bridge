@@ -228,6 +228,13 @@ def cmd_accounts(args):
     print_table(headers, rows, args.json, args.csv)
 
 
+def get_date_preset(days: int) -> str:
+    """Return valid Meta Graph API date_preset string."""
+    if days in [3, 7, 14, 28, 30, 90]:
+        return f"last_{days}d"
+    return "last_30d"
+
+
 def get_target_account(args, prof: str) -> str:
     if getattr(args, 'account_id', None):
         return clean_act_id(args.account_id)
@@ -246,7 +253,7 @@ def cmd_campaigns(args):
 
     params = {
         "level": "campaign",
-        "date_preset": f"last_{days}_d" if days in [7, 14, 30, 90] else "last_30d",
+        "date_preset": get_date_preset(days),
         "fields": "campaign_name,objective,spend,impressions,clicks,cpc,ctr,cpm,actions,cost_per_action_type",
         "limit": 100
     }
@@ -282,7 +289,7 @@ def cmd_adsets(args):
 
     params = {
         "level": "adset",
-        "date_preset": f"last_{days}_d" if days in [7, 14, 30, 90] else "last_30d",
+        "date_preset": get_date_preset(days),
         "fields": "adset_name,campaign_name,spend,impressions,clicks,cpc,ctr,actions",
         "limit": 100
     }
@@ -318,7 +325,7 @@ def cmd_ads(args):
 
     params = {
         "level": "ad",
-        "date_preset": f"last_{days}_d" if days in [7, 14, 30, 90] else "last_30d",
+        "date_preset": get_date_preset(days),
         "fields": "ad_name,adset_name,campaign_name,spend,impressions,clicks,ctr,cpc,actions",
         "limit": args.limit or 100
     }
@@ -358,7 +365,7 @@ def cmd_breakdowns(args):
     bd_param = breakdown_map.get(args.by, args.by)
 
     params = {
-        "date_preset": f"last_{days}_d" if days in [7, 14, 30, 90] else "last_30d",
+        "date_preset": get_date_preset(days),
         "breakdowns": bd_param,
         "fields": "spend,impressions,clicks,ctr,cpc,actions",
         "limit": 100
