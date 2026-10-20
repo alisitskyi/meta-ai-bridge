@@ -17,7 +17,8 @@ With `meta-ai-bridge`:
 - 🤖 **Empower AI Assistants:** Give your AI direct access to query live Meta campaign metrics, calculate real CAC, and compare performance against Google Ads and GA4.
 - ⚡ **Lightweight & Fast:** Direct calls to Graph API v21.0 using standard requests.
 - 📱 **Placement & Demographic Breakdowns:** Instantly see if your budget is performing better on Instagram Reels vs Stories vs Facebook Feed.
-- 🔄 **Multiple Profiles:** Switch between personal and client ad accounts seamlessly using `--profile <name>`.
+- 🔄 **Multi-Account & Multi-Profile:** Query multiple ad accounts on the fly with `--account-id` or configure distinct profiles using `--profile <name>`.
+- ⏳ **Flexible Date Ranges & Presets:** Query last 7/14/30/90 days or all-time history with `--preset maximum`.
 
 ---
 
@@ -44,16 +45,22 @@ chmod +x install.sh
 
 ### 2. Configure Access Token & Account ID
 
-Get your **System User Access Token** (never expires) from Meta Business Manager $\rightarrow$ Business Settings $\rightarrow$ System Users, or from [Meta Developer App](https://developers.facebook.com/):
+#### Getting a Token:
+1. **60-Day Token (Fastest):**
+   - Go to [Meta Graph API Explorer](https://developers.facebook.com/tools/explorer/).
+   - Select your App, click **Get Token** $\rightarrow$ **Get User Access Token**, check **`ads_read`**, and click **Generate Access Token**.
+   - Open [Access Token Debugger](https://developers.facebook.com/tools/debug/accesstoken/), paste the token, click **Debug**, and click **Extend Access Token** at the bottom to get a 60-day token.
+2. **Never-Expiring Token (System User):**
+   - Meta Business Settings $\rightarrow$ Users $\rightarrow$ System Users $\rightarrow$ Add Admin $\rightarrow$ Assign Ad Accounts $\rightarrow$ Generate Token (`ads_read`, Expiration: Never).
+
+#### Saving the Configuration:
 ```powershell
-# Set your token (default profile)
-meta config --access-token "YOUR_META_ACCESS_TOKEN"
+# Set your token and default account
+meta config --access-token "YOUR_META_ACCESS_TOKEN" --account-id "1308426748018713"
 
-# (Optional) Set your default ad account ID
-meta config --account-id "act_123456789"
-
-# Configure a specific profile (e.g. for a client or work account)
-meta config --profile work --access-token "WORK_TOKEN" --account-id "act_987654321"
+# (Optional) Add named profiles for other accounts/clients:
+meta config --profile helpcrunch --account-id "1740528223248437"
+meta config --profile bib --account-id "708855853851186"
 ```
 
 ---
@@ -62,7 +69,8 @@ meta config --profile work --access-token "WORK_TOKEN" --account-id "act_9876543
 
 All commands work interchangeably with `meta`, `fbads`, or `meta-ads`.
 
-### 1. List Accessible Ad Accounts
+### 1. List All Accessible Ad Accounts
+See every ad account, currency, total spend, and status accessible by your token:
 ```bash
 meta accounts
 ```
@@ -70,26 +78,39 @@ meta accounts
 ### 2. Campaign Performance Overview
 List campaigns with spend, clicks, impressions, CTR, CPC, leads, and purchases:
 ```bash
+# Default account (last 30 days)
 meta campaigns
+
+# Specific timeframe
+meta campaigns --days 7
 meta campaigns --days 14
-meta campaigns --days 30 --json
-meta campaigns --profile work
+
+# All-time / Historical data
+meta campaigns --preset maximum
+meta campaigns --preset this_year
+
+# Target another account on the fly
+meta campaigns --account-id 1740528223248437
+meta campaigns --profile helpcrunch
 ```
 
 ### 3. Ad Sets Breakdown
 ```bash
 meta adsets --days 30
+meta adsets --account-id 1740528223248437
 ```
 
 ### 4. Ads / Creative Performance (Detect Fatigue)
-Evaluate individual ads by spend, CTR, and purchases:
+Evaluate individual creatives by spend, CTR, and conversions:
 ```bash
 meta ads --days 30
+meta ads --limit 50
 ```
 
 ### 5. Breakdowns (Placements, Demographics, Countries)
 ```bash
-# Compare Instagram Reels vs Stories vs Feed:
+# Compare Instagram Reels vs Stories vs Facebook Feed:
+meta breakdowns --by placement --days 7
 meta breakdowns --by placement --days 30
 
 # Breakdown by Country:
@@ -97,6 +118,11 @@ meta breakdowns --by country --days 30
 
 # Breakdown by Age & Gender:
 meta breakdowns --by age_gender --days 30
+```
+
+### 6. Raw Graph API Query
+```bash
+meta query --endpoint "me/adaccounts" --params '{"fields":"name,currency"}' --json
 ```
 
 ---
@@ -116,6 +142,11 @@ Add to `.claude/settings.json` or `.cursorrules`:
   ]
 }
 ```
+
+Prompt examples for AI assistants:
+- *"Show Meta campaign spend and CTR for the last 14 days using `meta campaigns --days 14`."*
+- *"Compare Instagram Reels vs Feed performance with `meta breakdowns --by placement`."*
+- *"Audit creative performance for account HelpCrunch EN using `meta ads --profile helpcrunch`."*
 
 ---
 
