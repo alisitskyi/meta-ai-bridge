@@ -1,0 +1,8 @@
+# Cursor Rules for Meta Ads Integration
+
+When asked about Meta / Facebook / Instagram Ads, campaigns, ad spend, CPA, or creative fatigue:
+- Use the `fbads` (or `meta-ads`) CLI tool in the terminal to query live Meta Ads data via Graph API.
+- Use `fbads accounts` to list available ad accounts.
+- Use `fbads campaigns` to inspect spend, CTR, CPC, and conversion metrics.
+- Use `fbads breakdowns --by placement` to evaluate Instagram Reels vs Feed.
+- Use `--json` to inspect raw responses.
