@@ -27,14 +27,14 @@ With `meta-ai-bridge`:
 
 **Windows (PowerShell):**
 ```powershell
-git clone https://github.com/<your-username>/meta-ai-bridge.git
+git clone https://github.com/alisitskyi/meta-ai-bridge.git
 cd meta-ai-bridge
 .\install.ps1
 ```
 
 **macOS / Linux:**
 ```bash
-git clone https://github.com/<your-username>/meta-ai-bridge.git
+git clone https://github.com/alisitskyi/meta-ai-bridge.git
 cd meta-ai-bridge
 chmod +x install.sh
 ./install.sh
