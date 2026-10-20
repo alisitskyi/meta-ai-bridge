@@ -1,1 +1,1 @@
-& python "C:\folder\JOB\VS_Code_AL\meta-ads-ai-bridge\src\meta_ai\cli.py" $args
+& python "C:\folder\JOB\VS_Code_AL\meta-ai-bridge\src\meta_ai\cli.py" $args

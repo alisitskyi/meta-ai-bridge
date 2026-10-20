@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "meta-ads-ai-bridge"
+name = "meta-ai-bridge"
 version = "1.0.0"
-description = "Universal Meta (Facebook & Instagram) Ads CLI bridge for AI coding assistants (Claude Code, Cursor, Cline, Copilot)"
+description = "Universal Meta (Facebook & Instagram) CLI bridge for AI coding assistants (Claude Code, Cursor, Cline, Copilot)"
 readme = "README.md"
 authors = [{ name = "Anton Lisitskyi" }]
 license = { text = "MIT" }
@@ -15,6 +15,7 @@ dependencies = [
 ]
 
 [project.scripts]
+meta = "meta_ai.cli:main"
 fbads = "meta_ai.cli:main"
 meta-ads = "meta_ai.cli:main"
 

@@ -404,8 +404,13 @@ def main():
     common_parser = argparse.ArgumentParser(add_help=False)
     common_parser.add_argument("--profile", default="default", help="Meta Ads account profile name (e.g. 'work', 'client')")
 
+    # Use executed command name if available, default to meta
+    invoked_name = Path(sys.argv[0]).stem if sys.argv and sys.argv[0] else "meta"
+    if invoked_name in ("cli", "meta_tool"):
+        invoked_name = "meta"
+
     parser = argparse.ArgumentParser(
-        prog="fbads",
+        prog=invoked_name,
         description="Global Meta (Facebook & Instagram) Ads CLI for AI assistants and marketers.",
         parents=[common_parser]
     )

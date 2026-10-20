@@ -1,11 +1,11 @@
-# Windows Installer for meta-ads-ai-bridge
+# Windows Installer for meta-ai-bridge
 param(
     [string]$AccessToken = "",
     [string]$AccountId = ""
 )
 
 Write-Host "==========================================" -ForegroundColor Cyan
-Write-Host "  Installing meta-ads-ai-bridge (Windows) " -ForegroundColor Cyan
+Write-Host "  Installing meta-ai-bridge (Windows)     " -ForegroundColor Cyan
 Write-Host "==========================================" -ForegroundColor Cyan
 
 # 1. Check Python
@@ -33,6 +33,8 @@ New-Item -ItemType Directory -Path $metaBin -Force | Out-Null
 
 Copy-Item "$PSScriptRoot\src\meta_ai\cli.py" -Destination "$metaHome\meta_tool.py" -Force
 
+"@echo off`r`npython `"$metaHome\meta_tool.py`" %*" | Set-Content "$metaBin\meta.cmd" -Force
+"& python `"$metaHome\meta_tool.py`" `$args" | Set-Content "$metaBin\meta.ps1" -Force
 "@echo off`r`npython `"$metaHome\meta_tool.py`" %*" | Set-Content "$metaBin\fbads.cmd" -Force
 "& python `"$metaHome\meta_tool.py`" `$args" | Set-Content "$metaBin\fbads.ps1" -Force
 "@echo off`r`npython `"$metaHome\meta_tool.py`" %*" | Set-Content "$metaBin\meta-ads.cmd" -Force
@@ -60,6 +62,6 @@ $env:PATH = "$env:PATH;$metaBin"
 
 Write-Host "`n[+] Installation complete!" -ForegroundColor Cyan
 Write-Host "Next steps:" -ForegroundColor White
-Write-Host "1. Set access token: fbads config --access-token <YOUR_TOKEN>"
-Write-Host "2. List accessible ad accounts: fbads accounts"
-Write-Host "3. View campaigns: fbads campaigns"
+Write-Host "1. Set access token: meta config --access-token <YOUR_TOKEN>"
+Write-Host "2. List accessible ad accounts: meta accounts"
+Write-Host "3. View campaigns: meta campaigns"

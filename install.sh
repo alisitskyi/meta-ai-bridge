@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# macOS / Linux Installer for meta-ads-ai-bridge
+# macOS / Linux Installer for meta-ai-bridge
 set -e
 
 echo "=========================================="
-echo "  Installing meta-ads-ai-bridge (Unix)    "
+echo "  Installing meta-ai-bridge (Unix)        "
 echo "=========================================="
 
 PYTHON_CMD=$(which python3 || which python || true)
@@ -23,13 +23,14 @@ mkdir -p "$META_BIN"
 
 cp "$(dirname "$0")/src/meta_ai/cli.py" "$META_HOME/meta_tool.py"
 
-cat << 'EOF' > "$META_BIN/fbads"
+cat << 'EOF' > "$META_BIN/meta"
 #!/usr/bin/env bash
 python3 "$HOME/.meta_ads/meta_tool.py" "$@"
 EOF
-chmod +x "$META_BIN/fbads"
+chmod +x "$META_BIN/meta"
 
-ln -sf "$META_BIN/fbads" "$META_BIN/meta-ads"
+ln -sf "$META_BIN/meta" "$META_BIN/fbads"
+ln -sf "$META_BIN/meta" "$META_BIN/meta-ads"
 
 SHELL_RC=""
 if [ -f "$HOME/.zshrc" ]; then
@@ -47,5 +48,5 @@ fi
 
 echo ""
 echo "[+] Installation complete!"
-echo "1. Set access token: fbads config --access-token <YOUR_TOKEN>"
-echo "2. Run: fbads accounts"
+echo "1. Set access token: meta config --access-token <YOUR_TOKEN>"
+echo "2. Run: meta accounts"
